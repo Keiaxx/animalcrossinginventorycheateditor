@@ -5,8 +5,10 @@ import QtQuick.Controls 1.4 as Controls1
 import QtQuick.Controls 2.12
 import gose.JsonFile 1.0
 import SortFilterProxyModel 0.2
+import Qt.labs.settings 1.1
 
 Window {
+    id: root
     visible: true
     minimumWidth: 1200
     minimumHeight: 800
@@ -19,8 +21,75 @@ Window {
     property string selectedItemDetail: ''
     property int selectedItemCount: 1
     property bool movementEnabled: false
+    property string ftpString: "ftp://192.168.86.41:5000/sxos/titles/01006f8002326000/cheats/a31f81d41e1039c5.txt"
 
     readonly property var itemOffsets: ["AC3B90C0 AC3B90C4", "AC3B90C8 AC3B90CC", "AC3B90D0 AC3B90D4", "AC3B90D8 AC3B90DC", "AC3B90E0 AC3B90E4", "AC3B90E8 AC3B90EC", "AC3B90F0 AC3B90F4", "AC3B90F8 AC3B90FC", "AC3B9100 AC3B9104", "AC3B9108 AC3B910C", "AC3B9110 AC3B9114", "AC3B9118 AC3B911C", "AC3B9120 AC3B9124", "AC3B9128 AC3B912C", "AC3B9130 AC3B9134", "AC3B9138 AC3B913C", "AC3B9140 AC3B9144", "AC3B9148 AC3B914C", "AC3B9150 AC3B9154", "AC3B9158 AC3B915C", "AC3B9008 AC3B900C", "AC3B9010 AC3B9014", "AC3B9018 AC3B901C", "AC3B9020 AC3B9024", "AC3B9028 AC3B902C", "AC3B9030 AC3B9034", "AC3B9038 AC3B903C", "AC3B9040 AC3B9044", "AC3B9048 AC3B904C", "AC3B9050 AC3B9054", "AC3B9058 AC3B905C", "AC3B9060 AC3B9064", "AC3B9068 AC3B906C", "AC3B9070 AC3B9074", "AC3B9078 AC3B907C", "AC3B9080 AC3B9084", "AC3B9088 AC3B908C", "AC3B9090 AC3B9094", "AC3B9098 AC3B909C", "AC3B90A0 AC3B90A4"]
+
+    Settings{
+        property alias ftpString: root.ftpString
+    }
+
+    Popup {
+        id: messageDialog
+        x: parent.width/2 - width/2
+        y: parent.height/2 - height/2
+        width: 400
+        height: 200
+        modal: true
+        focus: true
+        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
+
+        property string text: ''
+
+        background: Rectangle {
+            radius: 5
+            color: "gray"
+            Text {
+                anchors.centerIn: parent
+                id: messageDial
+                text: messageDialog.text
+            }
+
+            Button{
+                anchors.bottom: parent.bottom
+                height: 20
+                onClicked: {
+                    messageDialog.close()
+                }
+                text: "Close"
+            }
+        }
+    }
+
+    Connections{
+        target: fileHandler
+
+        onNetworkDone: {
+            messageDialog.text = message
+            messageDialog.open()
+
+            connectTimeout.stop()
+        }
+
+        onNetworkError: {
+            messageDialog.text = message
+            messageDialog.open()
+
+            connectTimeout.stop()
+        }
+    }
+
+    Timer{
+        id: connectTimeout
+
+        onTriggered: {
+            messageDialog.text = "Unable to connect to your switch!"
+            messageDialog.open()
+        }
+
+        interval: 5
+
+    }
 
     function generateAndUpload() {
         let lines = ["[ItemSet ACITEMCHEATMAKER]"]
@@ -59,8 +128,9 @@ Window {
 
         if(numitems > 0){
             generatedJson.text = JSON.stringify(inJson)
-
-            fileHandler.generate(lines)
+            messageDialog.text = "Connecting to switch..."
+            messageDialog.open()
+            fileHandler.generate(ftpString, lines)
         }
 
 
@@ -332,6 +402,20 @@ Window {
 
 
 
+                }
+            }
+
+
+
+            Row{
+                Text {
+                    text: qsTr("FTP String: ")
+                    font.pixelSize: 20
+                }
+                TextField {
+                    id: ftpField
+                    text: ftpString
+                    width: 400
                 }
             }
 

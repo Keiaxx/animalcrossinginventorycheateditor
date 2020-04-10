@@ -11,10 +11,11 @@ FileHandler::~FileHandler()
 
 }
 
-void FileHandler::generate(QVariantList qvl)
+void FileHandler::generate(QString ftpstring, QVariantList qvl)
 {
 
-    QUrl url("ftp://192.168.86.41:5000/sxos/titles/01006f8002326000/cheats/a31f81d41e1039c5.txt");
+    qDebug() << "Attempting to connect to : " << ftpstring;
+    QUrl url(ftpstring);
 
     data = new QFile("tempout.txt", this);
     if(data->open(QIODevice::ReadWrite)){
@@ -31,6 +32,7 @@ void FileHandler::generate(QVariantList qvl)
         reply = nam.put(QNetworkRequest(url), data);
         connect(reply, SIGNAL(uploadProgress(qint64, qint64)), SLOT(uploadProgress(qint64, qint64)));
         connect(reply, SIGNAL(finished()), SLOT(uploadDone()));
+        connect(reply, SIGNAL(error(QNetworkReply::NetworkError)), this, SLOT(networkError()));
     }
     else
         qDebug() << "Oops";
