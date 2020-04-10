@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<RCC>
+    <qresource prefix="/">
+        <file alias="items.json">items.json</file>
+    </qresource>
+</RCC>
