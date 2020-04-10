@@ -3,6 +3,7 @@ branches:
     - master
 
 install:
+  - git submodule update --init --recursive
   - set QT5=C:\Qt\5.12.6\mingw73_32
   - set MINGW=C:\Qt\Tools\mingw730_32
   - set PATH=%MINGW%\bin;%QT5%\bin;%PATH%
