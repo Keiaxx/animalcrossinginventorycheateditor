@@ -30,9 +30,7 @@ debug/singlerole.o
 debug/regexprole.o
 debug/filtersorter.o
 debug/filterrole.o
-debug/qrc_qml_qmlcache.o
-debug/main_qml.o
-debug/qmlcache_loader.o
+debug/qrc_qml.o
 debug/moc_qqmlsortfilterproxymodel.o
 debug/moc_filter.o
 debug/moc_filtercontainer.o

@@ -17,11 +17,15 @@ void FileHandler::generate(QString ftpstring, QVariantList qvl)
     qDebug() << "Attempting to connect to : " << ftpstring;
     QUrl url(ftpstring);
 
+    QFile file("tempout.txt", this);
+    file.remove();
+
     data = new QFile("tempout.txt", this);
     if(data->open(QIODevice::ReadWrite)){
         QTextStream ts(data);
 
         for(auto line : qvl){
+            qDebug() << line.toString();
             ts << line.toString() << endl;
         }
     }
@@ -37,33 +41,25 @@ void FileHandler::generate(QString ftpstring, QVariantList qvl)
     else
         qDebug() << "Oops";
 
-    //    compressedFile = new QFile("tempout.txt");
+}
 
-    //    QTextStream stream( compressedFile );
-    //    if(compressedFile->open(QIODevice::ReadWrite)){
-    //        QUrl urlup("ftp://127.0.0.1:21/tempout.txt");
-    //        //        QNetworkAccessManager *nam = new QNetworkAccessManager;
+QVariantList FileHandler::getSavedItemSets()
+{
+    QVariantList itemSetFilenames;
 
-    //        //        QNetworkRequest requp(urlup);
-    //        //        QNetworkReply *reply = nam->put(requp,&file);
+    QDir directory(this->getStandardPath()+"/sets");
 
-    //        //        file.close();
+    QStringList sets = directory.entryList(QStringList() << "*.json" << "*.JSON",QDir::Files);
+    foreach(QString set, sets) {
+        itemSetFilenames.push_back(set.section(".",0,0));
+    }
+    return itemSetFilenames;
+}
 
-    //        QNetworkAccessManager *manager = new QNetworkAccessManager(this);
-    ////        connect(manager, &QNetworkAccessManager::finished,
-    ////                this, &FileHandler::replyFinished);
+void FileHandler::deleteSet(QString name)
+{
+    QFile file(this->getStandardPath()+"/sets/"+name+".json");
 
-
-    //        QNetworkRequest req;
-    //        req.setUrl(urlup);
-
-
-    //        QNetworkReply *reply = manager->put(req, compressedFile);
-
-    //        connect(reply, SIGNAL(uploadProgress(qint64, qint64)), SLOT(uploadProgress(qint64, qint64)));
-    //        connect(reply, SIGNAL(finished()), SLOT(uploadDone()));
-
-    //        qDebug() << "TESTING FILE";
-    //    }
+    file.remove();
 }
 

@@ -30,9 +30,7 @@ release/singlerole.o
 release/regexprole.o
 release/filtersorter.o
 release/filterrole.o
-release/qrc_qml_qmlcache.o
-release/main_qml.o
-release/qmlcache_loader.o
+release/qrc_qml.o
 release/moc_qqmlsortfilterproxymodel.o
 release/moc_filter.o
 release/moc_filtercontainer.o

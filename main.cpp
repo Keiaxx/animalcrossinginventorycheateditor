@@ -1,7 +1,11 @@
+#include <QDebug>
 #include <QApplication>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 #include "jsonfile.h"
+
+#include <QDir>
+#include <QStandardPaths>
 
 #include "filehandler.h"
 
@@ -13,6 +17,19 @@ int main(int argc, char** argv)
     FileHandler *fh = new FileHandler();
 
     QApplication app(argc, argv);
+
+    app.setOrganizationName("Keiaxx Software");
+    app.setOrganizationDomain("gose.pw");
+    app.setApplicationName("ACItemCheatMaker");
+
+    QString dataLocation = QStandardPaths::locate(QStandardPaths::DataLocation, QString(), QStandardPaths::LocateDirectory);
+
+    qDebug() << "DATA DIR: " << dataLocation;
+
+    if(!QDir(dataLocation+"/sets").exists()){
+        qDebug() << "Sets folder did not exist. Creating " << dataLocation;
+        QDir().mkdir(dataLocation+"/sets");
+    }
 
     QQmlApplicationEngine engine;
 

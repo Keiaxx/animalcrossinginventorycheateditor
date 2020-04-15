@@ -9,6 +9,11 @@
 #include <QNetworkRequest>
 #include <QDebug>
 
+#include <QDir>
+#include <QVariantList>
+
+#include <QStandardPaths>
+
 
 
 class FileHandler : public QObject
@@ -20,6 +25,11 @@ public:
     ~FileHandler();
 
     Q_INVOKABLE void generate(QString ftpstring, QVariantList qvl);
+    Q_INVOKABLE QVariantList getSavedItemSets();
+    Q_INVOKABLE QString getStandardPath(){
+        return QStandardPaths::locate(QStandardPaths::DataLocation, QString(), QStandardPaths::LocateDirectory);
+    }
+    Q_INVOKABLE void deleteSet(QString name);
 
     public slots:
 
