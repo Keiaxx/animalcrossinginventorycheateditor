@@ -20,11 +20,17 @@ Window {
     property string selectedItemName: ''
     property string selectedItemHexstr: ''
     property string selectedItemDetail: ''
+    property string selectedItemdiyid: ''
     property int selectedItemCount: 1
     property bool movementEnabled: false
-    property string ftpString: "ftp://192.168.86.41:5000/sxos/titles/01006f8002326000/cheats/a31f81d41e1039c5.txt"
+    property string ftpString: "ftp://192.168.86.41:5000/sxos/titles/01006f8002326000/cheats/20ca968c082118c2.txt"
 
-    readonly property var itemOffsets: ["AC3B90C0 AC3B90C4", "AC3B90C8 AC3B90CC", "AC3B90D0 AC3B90D4", "AC3B90D8 AC3B90DC", "AC3B90E0 AC3B90E4", "AC3B90E8 AC3B90EC", "AC3B90F0 AC3B90F4", "AC3B90F8 AC3B90FC", "AC3B9100 AC3B9104", "AC3B9108 AC3B910C", "AC3B9110 AC3B9114", "AC3B9118 AC3B911C", "AC3B9120 AC3B9124", "AC3B9128 AC3B912C", "AC3B9130 AC3B9134", "AC3B9138 AC3B913C", "AC3B9140 AC3B9144", "AC3B9148 AC3B914C", "AC3B9150 AC3B9154", "AC3B9158 AC3B915C", "AC3B9008 AC3B900C", "AC3B9010 AC3B9014", "AC3B9018 AC3B901C", "AC3B9020 AC3B9024", "AC3B9028 AC3B902C", "AC3B9030 AC3B9034", "AC3B9038 AC3B903C", "AC3B9040 AC3B9044", "AC3B9048 AC3B904C", "AC3B9050 AC3B9054", "AC3B9058 AC3B905C", "AC3B9060 AC3B9064", "AC3B9068 AC3B906C", "AC3B9070 AC3B9074", "AC3B9078 AC3B907C", "AC3B9080 AC3B9084", "AC3B9088 AC3B908C", "AC3B9090 AC3B9094", "AC3B9098 AC3B909C", "AC3B90A0 AC3B90A4"]
+    // Old pre 1.2.0 offsets
+    //readonly property var itemOffsets: ["AC3B90C0 AC3B90C4", "AC3B90C8 AC3B90CC", "AC3B90D0 AC3B90D4", "AC3B90D8 AC3B90DC", "AC3B90E0 AC3B90E4", "AC3B90E8 AC3B90EC", "AC3B90F0 AC3B90F4", "AC3B90F8 AC3B90FC", "AC3B9100 AC3B9104", "AC3B9108 AC3B910C", "AC3B9110 AC3B9114", "AC3B9118 AC3B911C", "AC3B9120 AC3B9124", "AC3B9128 AC3B912C", "AC3B9130 AC3B9134", "AC3B9138 AC3B913C", "AC3B9140 AC3B9144", "AC3B9148 AC3B914C", "AC3B9150 AC3B9154", "AC3B9158 AC3B915C", "AC3B9008 AC3B900C", "AC3B9010 AC3B9014", "AC3B9018 AC3B901C", "AC3B9020 AC3B9024", "AC3B9028 AC3B902C", "AC3B9030 AC3B9034", "AC3B9038 AC3B903C", "AC3B9040 AC3B9044", "AC3B9048 AC3B904C", "AC3B9050 AC3B9054", "AC3B9058 AC3B905C", "AC3B9060 AC3B9064", "AC3B9068 AC3B906C", "AC3B9070 AC3B9074", "AC3B9078 AC3B907C", "AC3B9080 AC3B9084", "AC3B9088 AC3B908C", "AC3B9090 AC3B9094", "AC3B9098 AC3B909C", "AC3B90A0 AC3B90A4"]
+
+    // For 1.2.0 offsets
+    readonly property var itemOffsets: ["AC4723D0", "AC4723D8", "AC4723E0", "AC4723E8", "AC4723F0", "AC4723F8", "AC472400", "AC472408", "AC472410", "AC472418", "AC472420", "AC472428", "AC472430", "AC472438", "AC472440", "AC472448", "AC472450", "AC472458", "AC472460", "AC472468", "AC472318", "AC472320" , "AC472328", "AC472330", "AC472338", "AC472340", "AC472348", "AC472350", "AC472358", "AC472360", "AC472368", "AC472370", "AC472378", "AC472380", "AC472388", "AC472390", "AC472398", "AC4723A0", "AC4723A8", "AC4723B0"]
+
 
     Settings{
         id: settings
@@ -115,6 +121,7 @@ Window {
                             name: element.name,
                             detail: element.detail,
                             hexstr: element.hexstr,
+                            diyid: element.diyid,
                             count: element.count,
                             gridId: element.gridId
                         })
@@ -219,15 +226,16 @@ Window {
                 let hexstr = element.hexstr
                 let count = element.count-1
                 let counthex = count.toString(16).toUpperCase()
+                let diyid = element.diyid
 
                 if(hexstr !== ''){
-                    let offsets = itemOffsets[i]
-                    let top = offsets.split(" ")[0]
-                    let bot = offsets.split(" ")[1]
+                    let offset = itemOffsets[i]
 
-
-                    lines.push("04100000 "+top+" "+hexstr)
-                    lines.push("04100000 "+bot+" "+(new Array(9-counthex.length).join("0")+counthex))
+                    if(diyid){
+                        lines.push("08100000 "+offset+" "+(new Array(9-diyid.length).join("0")+diyid)+" 000016A2")
+                    }else{
+                        lines.push("08100000 "+offset+" "+(new Array(9-counthex.length).join("0")+counthex)+" "+hexstr)
+                    }
                 }
             }
 
@@ -247,6 +255,7 @@ Window {
             name: ''
             detail: ''
             hexstr: ''
+            diyid: ''
             count: 0
             gridId: 0
         }
@@ -262,6 +271,8 @@ Window {
             name: 'placeholder'
             hexstr: ''
             detail: ''
+            color: ''
+            diyid: ''
         }
     }
 
@@ -379,6 +390,7 @@ Window {
                             inventory.setProperty(i, "detail", e.detail)
                             inventory.setProperty(i, "hexstr", e.hexstr)
                             inventory.setProperty(i, "count", e.count)
+                            inventory.setProperty(i, "diyid", e.diyid)
                             inventory.setProperty(i, "gridId", e.gridId)
                         }
 
@@ -455,6 +467,8 @@ Window {
                         id: item; parent: loc
                         x: main.x + 5; y: main.y + 5
                         width: main.width - 10; height: main.height - 10;
+
+                        color: diyid ? "#ebd534" : "white"
 
                         Text{
                             anchors.margins: 10
@@ -541,12 +555,22 @@ Window {
                         inventory.setProperty(index, "name", '')
                         inventory.setProperty(index, "detail", '')
                         inventory.setProperty(index, "hexstr", '')
+                        inventory.setProperty(index, "diyid", '')
                         inventory.setProperty(index, "count", 0)
                     }else{
-                        inventory.setProperty(index, "name", selectedItemName)
-                        inventory.setProperty(index, "detail", selectedItemDetail)
-                        inventory.setProperty(index, "hexstr", selectedItemHexstr)
-                        inventory.setProperty(index, "count", selectedItemCount)
+                        if(inventory.get(index).diyid){
+                            inventory.setProperty(index, "name", selectedItemName)
+                            inventory.setProperty(index, "detail", selectedItemDetail)
+                            inventory.setProperty(index, "hexstr", selectedItemHexstr)
+                            inventory.setProperty(index, "diyid", '')
+                            inventory.setProperty(index, "count", selectedItemCount)
+                        }else{
+                            inventory.setProperty(index, "name", selectedItemName)
+                            inventory.setProperty(index, "detail", selectedItemDetail)
+                            inventory.setProperty(index, "hexstr", selectedItemHexstr)
+                            inventory.setProperty(index, "diyid", selectedItemdiyid)
+                            inventory.setProperty(index, "count", selectedItemCount)
+                        }
                     }
                 }
             }
@@ -601,6 +625,7 @@ Window {
                                                  detail: selectedItemDetail,
                                                  hexstr: selectedItemHexstr,
                                                  count: selectedItemCount,
+                                                 diyid: selectedItemdiyid,
                                                  gridId: j,
                                              })
                         }
@@ -617,6 +642,7 @@ Window {
                                                  name: '',
                                                  detail: '',
                                                  hexstr: '',
+                                                 diyid: '',
                                                  count: 0,
                                                  gridId: 0,
                                              })
@@ -654,6 +680,17 @@ Window {
                 }
                 Text {
                     text: selectedItemHexstr
+                    font.pixelSize: 20
+                }
+            }
+
+            Row{
+                Text {
+                    text: qsTr("Has DIY Recipe: ")
+                    font.pixelSize: 20
+                }
+                Text {
+                    text: selectedItemdiyid ? "YES (Click on slot again to toggle DIY or ITEM. When YELLOW it is DIY)" : "NO"
                     font.pixelSize: 20
                 }
             }
@@ -736,7 +773,7 @@ Window {
                 TextField {
                     id: ftpField
                     text: settings.ftpString
-                    width: 400
+                    width: 500
                     selectByMouse: true
 
                     onTextChanged: {
@@ -801,10 +838,11 @@ Window {
             anchors { top: textField.bottom; bottom: parent.bottom; left: parent.left; right: parent.right }
             model: personProxyModel
             delegate: Rectangle{
-                color: "#DDDDDD"
+                color: model.diyid ? "#EBD534" : "#DDDDDD"
                 height: 50
                 width: parent.width
-                Text { anchors.centerIn: parent; text: model.name + " " + model.detail; font.pixelSize: 16}
+
+                Text { anchors.centerIn: parent; text: model.name + " " + (model.color ? model.color : '') +" [" + model.detail + "]"; font.pixelSize: 14}
 
                 MouseArea{
                     anchors.fill: parent
@@ -813,6 +851,7 @@ Window {
                         selectedItemDetail = model.detail
                         selectedItemHexstr = model.hexstr
                         selectedItemName = model.name
+                        selectedItemdiyid = model.diyid
                     }
                 }
             }
@@ -827,7 +866,10 @@ Window {
 
         console.log( jsonFile.error)
 
+        let itemCount = 0
+
         for(var i in items){
+            itemCount++
             let item = items[i]
             itemsModel.append(item)
         }
@@ -843,5 +885,7 @@ Window {
                                  gridId: 0,
                              })
         }
+
+        console.log("Loaded " + itemCount + " items and " + itemOffsets.length + " item offsets")
     }
 }
